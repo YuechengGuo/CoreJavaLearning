@@ -3,7 +3,7 @@ package Assignment1;
 import java.util.Scanner;
 
 /*
- *	Print a factorial of a numebr
+ *	Print a factorial of a number
  */
 
 public class Q4 {	
@@ -17,6 +17,7 @@ public class Q4 {
 		Scanner scan = new Scanner(System.in);
 		System.out.println("Enter an integer to calculate it's factorial:");
 		int num = scan.nextInt();
+		scan.close();
 		return num;
 	}
 
