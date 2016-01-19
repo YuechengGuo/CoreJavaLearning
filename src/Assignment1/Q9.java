@@ -2,19 +2,23 @@ package Assignment1;
 
 /* 
  * Sort the command line arguments (asc/desc) (ignoring dash "-" )
+ * priority: length --> ASCII (ignoring dash)
  */
 import java.util.ArrayList;
 
 public class Q9 {
 	public static void main(String[] args) {
-		String str = "git fb -c -db a ddfsf";// inputCmd();
-		separateCmd(str);
-		newStrList1 = new String [count];
-	    sortCmd();
-		printResult();
-	    // System.out.println(newStrList);
+		String str = "git fb -c -db a ddfsf 00 312";// inputCmd(); require including the name/title of the commands at beginning
+		System.out.println("Entered commands: " + str);
+		SortCmdLnArgs(str, true);
 	}
-
+	
+	private static void SortCmdLnArgs(String str, boolean flag) {
+		separateCmd(str);
+	    sortCmd();
+		printResult(str, flag);
+	}	
+	
 	private static void separateCmd(String str) {
 		char [] ch = str.toCharArray();		
 		ArrayList<Integer> cmdtrueValue = new ArrayList<Integer>(); 
@@ -31,8 +35,6 @@ public class Q9 {
 			else
 				strList.add(str.substring(cmdtrueValue.get(i)));
 		}
-		System.out.println(strList);
-		System.out.println(count);
 	}
 	
 	private static void sortCmd() {
@@ -80,21 +82,36 @@ public class Q9 {
 					index = j;	
 				}				
 			}
-			System.out.println(index);
 			newStrList.add(strList.get(index)); // add the least cmd from left to right
 			trueValue[index] = -1; // erase the value 
 		}
 		
 	}
 	
-	private static void printResult() {
-//		for (int i = 0; i<newStrList1.length; i++) {
-//			System.out.println(newStrList1[i]);
-//		}
-		System.out.println(newStrList);
+	private static void printResult(String str, boolean flag) {
+		int index = 0; // index of the first "space"
+		for (int i = 0; i<str.length(); i++) {
+			if (str.charAt(i) == ' ') break;
+			index++;
+		}
+		String cmdName = "";
+		cmdName += str.substring(0, index);
+		String cmd = "";
+		for (String strs:newStrList) {
+			if (flag) {
+				cmd += " " + strs;
+			} else {
+				cmd = " " + strs + cmd;
+			}
+		}
+		if (flag) {
+			System.out.println("Ascend sorting:");
+		} else {
+			System.out.println("Descend sorting:");
+		}
+		System.out.println(cmdName + cmd);
 	}
 	private static ArrayList<String> strList = new ArrayList<String>();
 	private static ArrayList<String> newStrList = new ArrayList<String>();
-	private static String[] newStrList1;
 	private static int count; // count the number of commands from input
 }
