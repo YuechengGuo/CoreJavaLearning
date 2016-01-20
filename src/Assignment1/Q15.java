@@ -18,7 +18,8 @@ public class Q15 {
 			rd = new BufferedReader(new FileReader("example.txt"));
 			try {
 				while (rd.readLine() != null) {
-					System.out.println(rd.readLine().charAt(10));						
+					System.out.println(rd.readLine());
+					// System.out.println(rd.readLine().charAt(10));// error test						
 				}
 			} catch (IOException ex) {
 				System.err.println("Caught IOException: " + ex.getMessage());
