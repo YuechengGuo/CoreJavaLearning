@@ -21,8 +21,8 @@ public class Q15 {
 					System.out.println(rd.readLine());
 					// System.out.println(rd.readLine().charAt(10));// error test						
 				}
-			} catch (IOException ex) {
-				System.err.println("Caught IOException: " + ex.getMessage());
+			} catch (IndexOutOfBoundsException ex) {
+				System.err.println("Caught IndexOutOfBoundsException: " + ex.getMessage());
 			}
 		} catch (IOException ex) {					
 			System.err.println("Caught IOException: " + ex.getMessage());
