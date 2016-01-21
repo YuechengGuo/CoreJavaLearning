@@ -5,14 +5,15 @@ package Assignment1;
  */
 
 import java.io.*;
+import java.util.*;
 
 public class Q15 {
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception{
 		String str = "I";
 		nestedTryBlock(str);
 	}
 	
-	private static void nestedTryBlock(String str) {
+	private static void nestedTryBlock(String str) throws Exception{
 		BufferedReader rd = null;
 		try {
 			rd = new BufferedReader(new FileReader("example.txt"));
@@ -24,8 +25,10 @@ public class Q15 {
 			} catch (IndexOutOfBoundsException ex) {
 				System.err.println("Caught IndexOutOfBoundsException: " + ex.getMessage());
 			}
-		} catch (IOException ex) {					
+			rd.close();
+		} catch (IOException ex) {			
 			System.err.println("Caught IOException: " + ex.getMessage());
+			// throw new Exception(ex);
 		}
 	}
 }
