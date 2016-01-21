@@ -10,13 +10,14 @@ import java.util.*;
 public class Q15 {
 	public static void main(String[] args) throws Exception{
 		String str = "I";
-		nestedTryBlock(str);
+		Q15 instance = new Q15();
+		instance.nestedTryBlock(str);
 	}
 	
-	private static void nestedTryBlock(String str) throws Exception{
+	private /*static*/ void nestedTryBlock(String str) throws Exception {
 		BufferedReader rd = null;
 		try {
-			rd = new BufferedReader(new FileReader("example.txt"));
+			rd = new BufferedReader(new FileReader("examplez9.txt"));
 			try {
 				while (rd.readLine() != null) {
 					System.out.println(rd.readLine());
@@ -26,9 +27,10 @@ public class Q15 {
 				System.err.println("Caught IndexOutOfBoundsException: " + ex.getMessage());
 			}
 			rd.close();
-		} catch (IOException ex) {			
+		} catch (FileNotFoundException ex) {
+//			ex.printStackTrace();
 			System.err.println("Caught IOException: " + ex.getMessage());
-			// throw new Exception(ex);
+			throw new Exception(ex);
 		}
 	}
 }
