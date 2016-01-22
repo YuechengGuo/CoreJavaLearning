@@ -17,11 +17,11 @@ public class Q15 {
 	private /*static*/ void nestedTryBlock(String str) throws Exception {
 		BufferedReader rd = null;
 		try {
-			rd = new BufferedReader(new FileReader("examplez9.txt"));
+			rd = new BufferedReader(new FileReader("example.txt"));
 			try {
 				while (rd.readLine() != null) {
 					System.out.println(rd.readLine());
-					// System.out.println(rd.readLine().charAt(10));// error test						
+//					System.out.println(rd.readLine().charAt(10));// error test						
 				}
 			} catch (IndexOutOfBoundsException ex) {
 				System.err.println("Caught IndexOutOfBoundsException: " + ex.getMessage());
