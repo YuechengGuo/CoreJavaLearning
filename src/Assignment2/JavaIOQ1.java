@@ -10,38 +10,38 @@ import java.io.FilenameFilter;
 public class JavaIOQ1 {
 	/* declare constants */
 	/** file directory */
-	private static final String FILEPATH = "/User/Yuecheng/Desktop/";
+	private static final String FILEPATH = "/Users/Yuecheng/Desktop/";
 	
 	/** file type to be filtered */
-	private static String FILENAME = "text1.txt"; 
+	private static String FILEEXTENTSION= ".txt"; 
 	
 	public static void main(String[] args) {
 		JavaIOQ1 instance = new JavaIOQ1();
 		try {
-			File f = new File(FILEPATH + FILENAME);
+			File f = new File(FILEPATH);
+//			System.out.println(f);
 			instance.fileFilter(f);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 	}
 	
+	/* filter main method, override accept(File dir, String name){} method */
 	public void fileFilter(File f){
-		FilenameFilter ff = new FilenameFilter() {
+		FilenameFilter fileNameFilter = new FilenameFilter() {
 			@Override
-			public boolean accept(File dir, String s) {
-				if (s.lastIndexOf('.') > 0){
-					int ind = s.lastIndexOf('.'); // index of . in the string
-					String str = s.substring(ind); // save the extension in str
-					if (str.equals(".txt")) {
+			public boolean accept(File dir, String name) {
+				if (name.lastIndexOf('.') > 0){
+					int ind = name.lastIndexOf('.'); // index of . in the string
+					String str = name.substring(ind); // save the extension in str
+					if (str.equals(FILEEXTENTSION)) {
 						return true;
 					}
-				} else {
-					System.out.println("Please re-enter the file type you want.e.g.: filter.txt");
 				}
 				return false;
 			}
 		};
-		File[] paths = f.listFiles(ff);
+		File[] paths = f.listFiles(fileNameFilter);
 		for (File path:paths) {
 			System.out.println(path);
 		}
