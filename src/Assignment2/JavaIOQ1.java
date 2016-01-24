@@ -1,5 +1,9 @@
 package Assignment2;
 
+/*
+ * create a Java pgm to filter the file types and display only files of specific extension type.
+ */
+
 import java.io.File;
 import java.io.FilenameFilter;
 
@@ -14,7 +18,7 @@ public class JavaIOQ1 {
 	public static void main(String[] args) {
 		JavaIOQ1 instance = new JavaIOQ1();
 		try {
-			File f = new File(FILENAME);
+			File f = new File(FILEPATH + FILENAME);
 			instance.fileFilter(f);
 		} catch (Exception ex) {
 			ex.printStackTrace();
