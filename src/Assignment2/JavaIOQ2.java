@@ -8,13 +8,14 @@ package Assignment2;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.*;
 
 import javax.swing.*;
 
 public class JavaIOQ2 {
 	/** set size for the frame */
 	private static final int HEIGHT = 300;
-	private static final int WIDTH =300;
+	private static final int WIDTH =500;
 	
 	JavaIOQ2() {
 		Frame frame = new Frame();
@@ -26,18 +27,40 @@ public class JavaIOQ2 {
 		}
 	
 	private void setupInput() {
-		JTextField textInput = new JTextField("Input text here: ", 10);
+		JLabel textLabel = new JLabel("Input text here: ");
+		JTextField textInput = new JTextField(20);
+		JLabel textDisplay = new JLabel("Your Input: ");
 		textInput.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e){
 				inputStr += textInput.getText();
+				textDisplay.setText(inputStr);
 				System.out.println(inputStr);
 			}
 		});
+		panel.add(textLabel);
 		panel.add(textInput);
+		panel.add(textDisplay);	
 	}
 	
-	private void createButton() {}
-
+	private void createButton() {
+		JButton button = new JButton("Save the file");
+		button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e){
+				createFile();
+			}
+		});
+		panel.add(button);
+	}
+	
+	private void createFile(){
+		try {
+			PrintWriter writer = new PrintWriter("text01.txt");
+			writer.println(inputStr);
+			writer.close();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
 	
 	public static void main(String[] args) {
 		JavaIOQ2 instance = new JavaIOQ2();
