@@ -3,7 +3,7 @@ package Assignment2;
 /*
  * create a GUI program using Java Swing:
  * Display a Text area for input paragraph. 
- * On click of a button, save the file in a .txt file.
+ * On click of a button, save the file in a .txt file. 
  */
 
 import java.awt.*;
@@ -18,22 +18,24 @@ public class JavaIOQ2 {
 	private static final int WIDTH =500;
 	
 	JavaIOQ2() {
-		Frame frame = new Frame();
+		JFrame frame = new JFrame();
 		frame.setSize(WIDTH, HEIGHT);
 		setupInput();
 		createButton();	
 		frame.add(panel);
+		frame.add(bottomPanel, BorderLayout.SOUTH);
 		frame.setVisible(true);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		}
 	
 	private void setupInput() {
 		JLabel textLabel = new JLabel("Input text here: ");
 		JTextField textInput = new JTextField(20);
-		JLabel textDisplay = new JLabel("Your Input: ");
+		JLabel textDisplay = new JLabel("File content: ");
 		textInput.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e){
 				inputStr += textInput.getText();
-				textDisplay.setText(inputStr);
+				textDisplay.setText("File content: " + inputStr);
 				System.out.println(inputStr);
 			}
 		});
@@ -49,7 +51,7 @@ public class JavaIOQ2 {
 				createFile();
 			}
 		});
-		panel.add(button);
+		bottomPanel.add(button);
 	}
 	
 	private void createFile(){
@@ -68,6 +70,7 @@ public class JavaIOQ2 {
 	}
 	
 	private static JPanel panel = new JPanel();
+	private static JPanel bottomPanel = new JPanel();
 	private static String inputStr = "";
 }
 	
