@@ -29,6 +29,7 @@ public class JavaIOQ3 {
 		frame.setSize(WIDTH, HEIGHT);
 
 		setupExtList();
+		setupFileList();
 		mainDisplay();
 		// setupControls();
 		
@@ -117,7 +118,7 @@ public class JavaIOQ3 {
 				}
 			}
 		}
-		System.out.println(fileExtArrList);
+		System.out.println(fileExtArrList); // test Display
 	}
 	
 	private int indexOfDot(String str) {
@@ -136,16 +137,65 @@ public class JavaIOQ3 {
 		listExt.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		listExt.setSelectedIndex(0);
 		listExt.setVisibleRowCount(10);
+		selectedExt = fileExtArrList.get(0);
 		listExt.addListSelectionListener(new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
 				if (e.getValueIsAdjusting()) {
-					selectedExt = new String((String) (listExt.getSelectedValue()));
+					selectedExt = listExt.getSelectedValue();
+					setupFileList();
 				}
 			}
 		});
 		listExtPane = new JScrollPane(listExt);
 	}
+	
+	private void setupFileList() {
+//		String path = setPath();
+		String path = FILEPATH;
+		loadAllFiles(path);
+		addFileList();
+	}
+	
+	/*
+	 * list all files with selected extension
+	 */
+	private void loadAllFiles(String path) {
+		if (selectedExt != null) {
+			File folder = new File(path);
+			fileListArrList = new ArrayList<String>();
+			for (File file:folder.listFiles()) {
+				String fileName = file.getName();
+				if (fileName.endsWith(selectedExt)) {
+					fileListArrList.add(fileName);
+				}
+			}
+			System.out.println(fileListArrList);
+		}
+	}
+	
+	private void addFileList() {
+		DefaultListModel<String> fileListModel = new DefaultListModel<String>();
+		for (int i = 0; i < fileListArrList.size(); i++) {
+			fileListModel.addElement(fileListArrList.get(i));
+		}
+		
+		listFile = new JList<String>(fileListModel);
+		listFile.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+		listFile.setSelectedIndex(0);
+		listFile.setVisibleRowCount(10);
+		selectedFile = fileListArrList.get(0);
+		listFile.addListSelectionListener(new ListSelectionListener() {
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				if (e.getValueIsAdjusting()) {
+					selectedFile = new String((String) (listFile.getSelectedValue()));
+				}
+			}
+		});
+		listFilePane = new JScrollPane(listFile);
+	}
+	
 	/*
 	private void setupListbox() {
 		JComboBox<String> cb = new JComboBox<String>();
@@ -208,13 +258,15 @@ public class JavaIOQ3 {
 	private static JScrollPane listFilePane; // list all the files with certain extension
 	private static JScrollPane displayPane; // display file contents
 	
-	private static ArrayList<String> fileExtArrList; // arraylist saves all types of extension included in current path
+	private static ArrayList<String> fileExtArrList; // saves all types of extension included in current path
+	private static ArrayList<String> fileListArrList; // saves all files with selected extension in current path
 	
-	private static JList listExt;
-	private static JList listFile;
+	private static JList<String> listExt;
+	private static JList<String> listFile;
 	private static JTextArea content;
 	
 	private static String selectedExt;
+	private static String selectedFile;
 	
 	private static JavaIOQ1 fileFilter;
 }
