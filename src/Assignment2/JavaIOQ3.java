@@ -23,7 +23,7 @@ import javax.swing.event.ListSelectionListener;
 
 public class JavaIOQ3 implements ListSelectionListener {
 	/** set size for the frame */
-	private static final int WIDTH = 500;
+	private static final int WIDTH = 1000;
 	private static final int HEIGHT = 500;
 	
 	private static final int TOPPANELWIDTH = WIDTH;
@@ -32,10 +32,10 @@ public class JavaIOQ3 implements ListSelectionListener {
 	private static final int EXTPANEWIDTH = WIDTH / 20 * 3;
 	private static final int EXTPANEHEIGHT = HEIGHT / 10 * 6;
 	
-	private static final int FILEPANEWIDTH = WIDTH / 20 * 5;
+	private static final int FILEPANEWIDTH = WIDTH / 20 * 4;
 	private static final int FILEPANEHEIGHT = HEIGHT / 10 * 6;
 	
-	private static final int FILEDISPLAYWIDTH = WIDTH / 20 * 8;
+	private static final int FILEDISPLAYWIDTH = WIDTH / 20 * 9;
 	private static final int FILEDISPLAYHEIGHT = HEIGHT / 10 * 6;
 	
 	private static final int XOFFSET = WIDTH / 20 * 1;
@@ -88,18 +88,19 @@ public class JavaIOQ3 implements ListSelectionListener {
 		listFilePane.setSize(FILEPANEWIDTH, FILEPANEHEIGHT);
 		frame.add(listFilePane);
 		
+		content = new JTextArea("");
+		content.setSize(FILEDISPLAYWIDTH, FILEDISPLAYHEIGHT);
 		displayPane = new JScrollPane(content);
 		displayPane.setSize(FILEDISPLAYWIDTH, FILEDISPLAYHEIGHT);
-		content = new JTextArea();
-		content.setSize(FILEDISPLAYWIDTH, FILEDISPLAYHEIGHT);
+		displayPane.setPreferredSize(new Dimension(FILEDISPLAYWIDTH / 2, FILEDISPLAYHEIGHT / 2));
 		frame.add(displayPane);
 		
 		// area test starts
 		topPanel.setBackground(Color.WHITE);
-		listExtPane.setBackground(Color.YELLOW);
-		listFilePane.setBackground(Color.RED);
-		displayPane.setBackground(Color.GREEN);
-		content.setBackground(Color.WHITE);
+//		listExtPane.setBackground(Color.YELLOW);
+//		listFilePane.setBackground(Color.RED);
+//		displayPane.setBackground(Color.GREEN);
+//		content.setBackground(Color.RED);
 		// area test done
 		
 		customizeLayout();
@@ -121,30 +122,12 @@ public class JavaIOQ3 implements ListSelectionListener {
 	public void valueChanged(ListSelectionEvent e) {
 		if (e.getValueIsAdjusting()) {
 			if (e.getSource() == listExt){
-				selectedExt = listExt.getSelectedValue();
+				String selectedExt = listExt.getSelectedValue();
 				getFileList(selectedExt);
 			} else if (e.getSource() == listFile) {
-				selectedFile = listFile.getSelectedValue();
-				// readSelectedFile();
+				String selectedFile = listFile.getSelectedValue();
+				readSelectedFile(selectedFile);
 			}
-		}
-	}
-	
-	
-	private void getExtList() {
-//		String path = setPath();
-		extListModel.clear();
-		for (String key:extFilesMap.keySet()) {
-			// System.out.println(key); // test display
-			extListModel.addElement(key);
-		}
-	}
-	
-
-	private void getFileList(String key) {
-		fileListModel.clear();
-		for (String value:extFilesMap.get(key)){
-			fileListModel.addElement(value);
 		}
 	}
 	
@@ -178,6 +161,43 @@ public class JavaIOQ3 implements ListSelectionListener {
 //		System.out.println(extFilesMap.toString()); // test display
 	}
 	
+	
+	private void getExtList() {
+//		String path = setPath();
+		extListModel.clear();
+		for (String key:extFilesMap.keySet()) {
+			// System.out.println(key); // test display
+			extListModel.addElement(key);
+		}
+	}
+	
+	private void getFileList(String key) {
+		fileListModel.clear();
+		for (String value:extFilesMap.get(key)){
+			fileListModel.addElement(value);
+		}
+	}
+	
+	private void readSelectedFile(String fileName) {
+		System.out.println(fileName); // test display
+
+		content.setText("");
+		BufferedReader rd = null;
+		try{
+			rd = new BufferedReader(new FileReader(FILEPATH + fileName));
+			String str = "";
+			while (rd.readLine() != null){
+				str += rd.readLine() + "\n";
+			}
+			if (fileName.endsWith(".txt"))
+				content.setText(str);
+			else
+				content.setText(fileName);
+		} catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
 	public static void main(String[] args) {
 		new JavaIOQ3();
 		// fileFilter = new JavaIOQ1();
@@ -205,8 +225,8 @@ public class JavaIOQ3 implements ListSelectionListener {
 	private static JList<String> listFile;
 	private static JTextArea content;
 	
-	private static String selectedExt;
-	private static String selectedFile;
+//	private static String selectedExt;
+//	private static String selectedFile;
 	
 	private static HashMap<String, ArrayList<String>> extFilesMap;
 	private static ArrayList<String> tmpFileName;
