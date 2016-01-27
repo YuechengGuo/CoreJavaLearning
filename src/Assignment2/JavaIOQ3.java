@@ -6,7 +6,10 @@ import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.*;
@@ -47,8 +50,10 @@ public class JavaIOQ3 implements ListSelectionListener {
 		frame = new JFrame();
 		frame.setSize(WIDTH, HEIGHT);
 		mainDisplay();
+		
+		getFiles();
 		getExtList();
-		getFileList();
+		// getFileList();
 		// setupControls();
 	}
 	
@@ -57,12 +62,17 @@ public class JavaIOQ3 implements ListSelectionListener {
 		topPanel = new JPanel();
 		topPanel.setSize(TOPPANELWIDTH, TOPPANELHEIGHT);
 		frame.add(topPanel);
-		
+
+		tmpFileName = new ArrayList<String>();
 		fileExtArrList = new ArrayList<String>();
 		fileListArrList = new ArrayList<String>();
+		extFilesMap = new HashMap<String, ArrayList<String>>();
 
 		extListModel = new DefaultListModel<String>();
 		listExt = new JList<String>(extListModel);
+		listExt.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		listExt.setSelectedIndex(0);
+		listExt.setVisibleRowCount(10);
 		listExt.addListSelectionListener(this);
 		listExtPane = new JScrollPane(listExt);
 		listExtPane.setSize(EXTPANEWIDTH, EXTPANEHEIGHT);
@@ -70,6 +80,9 @@ public class JavaIOQ3 implements ListSelectionListener {
 		
 		fileListModel = new DefaultListModel<String>();
 		listFile = new JList<String>(fileListModel);
+		listFile.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		listFile.setSelectedIndex(0);
+		listFile.setVisibleRowCount(10);
 		listFile.addListSelectionListener(this);
 		listFilePane = new JScrollPane(listFile);
 		listFilePane.setSize(FILEPANEWIDTH, FILEPANEHEIGHT);
@@ -104,14 +117,15 @@ public class JavaIOQ3 implements ListSelectionListener {
 		displayPane.setBounds(XOFFSET + EXTPANEWIDTH + XPADDING * 2 + FILEPANEWIDTH + insets.left, YOFFSET + TOPPANELHEIGHT + YPADDING + insets.top, FILEDISPLAYWIDTH, FILEDISPLAYHEIGHT);
 	}
 	
-	@Override
+	@Override // selection listener for JList
 	public void valueChanged(ListSelectionEvent e) {
 		if (e.getValueIsAdjusting()) {
 			if (e.getSource() == listExt){
 				selectedExt = listExt.getSelectedValue();
-				getFileList();
+				getFileList(selectedExt);
 			} else if (e.getSource() == listFile) {
 				selectedFile = listFile.getSelectedValue();
+				// readSelectedFile();
 			}
 		}
 	}
@@ -119,100 +133,53 @@ public class JavaIOQ3 implements ListSelectionListener {
 	
 	private void getExtList() {
 //		String path = setPath();
-		String path = FILEPATH;
-		readFilesExt(path);
-		if (fileExtArrList != null) 
-			addExtList();
-		else
-			System.out.print("empty folder");
-	}
-	
-	private void readFilesExt(String path) {
-		fileExtArrList.clear();
-		File folder = new File(path);
-		for (File file:folder.listFiles()){
-			String fileName = file.getName();
-			int index = indexOfDot(fileName);
-			if (index > 0) {
-				String extOfFile = fileName.substring(index);	
-				if (!fileExtArrList.contains(extOfFile)) { // removed && fileExtArrList != null
-					fileExtArrList.add(extOfFile);
-				}
-			}
-		}
-//		System.out.println(fileExtArrList); // test Display
-	}
-	
-	private int indexOfDot(String str) {
-		if (str.contains(".")) {
-			return str.lastIndexOf(".");
-			}
-		return -1;
-	}
-	
-	private void addExtList() {
-		for (int i = 0; i < fileExtArrList.size(); i++) {
-			extListModel.addElement(fileExtArrList.get(i));
-		}
-		listExt.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-		listExt.setSelectedIndex(0);
-		listExt.setVisibleRowCount(10);
-		selectedExt = fileExtArrList.get(0);
-	}
-	
-	private void getFileList() {
-//		String path = setPath();
-		String path = FILEPATH;
-		loadAllFiles(path);
-		addFileList();
-	}
-	
-	/*
-	 * list all files with selected extension
-	 */
-	private void loadAllFiles(String path) {
-		fileListArrList.clear();
-		if (selectedExt != null) {
-			File folder = new File(path);
-			
-			for (File file:folder.listFiles()) {
-				String fileName = file.getName();
-				if (fileName.endsWith(selectedExt)) {
-					fileListArrList.add(fileName);
-				}
-			}
-//			System.out.println(fileListArrList); // test display
+		extListModel.clear();
+		for (String key:extFilesMap.keySet()) {
+			// System.out.println(key); // test display
+			extListModel.addElement(key);
 		}
 	}
 	
-	private void addFileList() {
+
+	private void getFileList(String key) {
 		fileListModel.clear();
-		for (int i = 0; i < fileListArrList.size(); i++) {
-			fileListModel.addElement(fileListArrList.get(i));
+		for (String value:extFilesMap.get(key)){
+			fileListModel.addElement(value);
 		}
-		
-		
-		System.out.println(fileListModel); // test display
-		
-		
-		listFile.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-		listFile.setSelectedIndex(0);
-		listFile.setVisibleRowCount(10);
-		
 	}
 	
-//	private void readSelectedFile(File f) {
-//		if (f != null) {
-//			BufferedReader br = new BufferedReader(new FileReader(f));
-//			while (br.readLine() != null ){
-//				
-//			}
-//		}
-//	}
-	
+	/* get all files from current path, map the extension with its files */
+	private void getFiles() {
+		// tmpFileName.clear();
+		try {
+			File folder = new File(FILEPATH);
+			FilenameFilter fileNameFilter = new FilenameFilter() {
+				@Override
+				public boolean accept(File dir, String name) {
+					if (name.lastIndexOf('.') > 0){
+						int ind = name.lastIndexOf('.'); // index of . in the string
+						String str = name.substring(ind); // save the extension in str
+						if (!extFilesMap.containsKey(str)) {
+							ArrayList<String> tmpList = new ArrayList<String>();
+							tmpList.add(name);
+							extFilesMap.put(str, tmpList);							
+						} else {
+							extFilesMap.get(str).add(name);
+						}
+						return true;
+					}
+					return false;
+				}
+			};
+			folder.listFiles(fileNameFilter);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+//		System.out.println(extFilesMap.toString()); // test display
+	}
 	
 	public static void main(String[] args) {
-		JavaIOQ3 instance = new JavaIOQ3();
+		new JavaIOQ3();
 		// fileFilter = new JavaIOQ1();
 	}
 	
@@ -241,6 +208,8 @@ public class JavaIOQ3 implements ListSelectionListener {
 	private static String selectedExt;
 	private static String selectedFile;
 	
+	private static HashMap<String, ArrayList<String>> extFilesMap;
+	private static ArrayList<String> tmpFileName;
 	private static JavaIOQ1 fileFilter;
 
 
