@@ -3,7 +3,9 @@ package Assignment2;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,48 +18,68 @@ import javax.swing.event.ListSelectionListener;
  * .txt, .java, .json, .xml, etc.
  */
 
-public class JavaIOQ3 {
+public class JavaIOQ3 implements ListSelectionListener {
 	/** set size for the frame */
-	private static final int HEIGHT = 500;
 	private static final int WIDTH = 500;
+	private static final int HEIGHT = 500;
 	
+	private static final int TOPPANELWIDTH = WIDTH;
+	private static final int TOPPANELHEIGHT = HEIGHT / 10 * 1;
+	
+	private static final int EXTPANEWIDTH = WIDTH / 20 * 3;
+	private static final int EXTPANEHEIGHT = HEIGHT / 10 * 6;
+	
+	private static final int FILEPANEWIDTH = WIDTH / 20 * 5;
+	private static final int FILEPANEHEIGHT = HEIGHT / 10 * 6;
+	
+	private static final int FILEDISPLAYWIDTH = WIDTH / 20 * 8;
+	private static final int FILEDISPLAYHEIGHT = HEIGHT / 10 * 6;
+	
+	private static final int XOFFSET = WIDTH / 20 * 1;
+	private static final int YOFFSET = HEIGHT / 20 * 0;
+	
+	private static final int XPADDING = WIDTH / 20 * 1;
+	private static final int YPADDING = HEIGHT / 10 * 1;
 	/** file path */ 
 	private static final String FILEPATH = "/Users/Yuecheng/Desktop/";
 	
 	JavaIOQ3() {
 		frame = new JFrame();
 		frame.setSize(WIDTH, HEIGHT);
-
-		setupExtList();
-		setupFileList();
 		mainDisplay();
+		getExtList();
+		getFileList();
 		// setupControls();
-		
 	}
 	
 	private void mainDisplay() {
-		// JLabel test = new JLabel("Display Extensions:");
-//		panel.setSize(500, 300);
-//		panel.setBackground(Color.WHITE);
-		
+
 		topPanel = new JPanel();
-//		extPanel = new JPanel();
-//		filePanel = new JPanel();
-//		displayPanel = new JPanel();
+		topPanel.setSize(TOPPANELWIDTH, TOPPANELHEIGHT);
+		frame.add(topPanel);
 		
+		fileExtArrList = new ArrayList<String>();
+		fileListArrList = new ArrayList<String>();
+
+		extListModel = new DefaultListModel<String>();
+		listExt = new JList<String>(extListModel);
+		listExt.addListSelectionListener(this);
+		listExtPane = new JScrollPane(listExt);
+		listExtPane.setSize(EXTPANEWIDTH, EXTPANEHEIGHT);
+		frame.add(listExtPane);
 		
+		fileListModel = new DefaultListModel<String>();
+		listFile = new JList<String>(fileListModel);
+		listFile.addListSelectionListener(this);
 		listFilePane = new JScrollPane(listFile);
+		listFilePane.setSize(FILEPANEWIDTH, FILEPANEHEIGHT);
+		frame.add(listFilePane);
+		
 		displayPane = new JScrollPane(content);
+		displayPane.setSize(FILEDISPLAYWIDTH, FILEDISPLAYHEIGHT);
 		content = new JTextArea();
-		
-		topPanel.setSize(WIDTH, HEIGHT / 10);
-//		extPanel.setSize(WIDTH / 20 * 5, HEIGHT / 10 * 9);
-//		filePanel.setSize(WIDTH / 20 * 5, HEIGHT / 10 * 9);
-//		displayPanel.setSize(WIDTH / 20 * 10, HEIGHT / 10 * 9);
-		
-		listExtPane.setSize(WIDTH / 20 * 3, HEIGHT / 10 * 6);
-		listFilePane.setSize(WIDTH / 20 * 3, HEIGHT / 10 * 6);
-		content.setSize(WIDTH/ 20 * 8, HEIGHT / 10 * 6);
+		content.setSize(FILEDISPLAYWIDTH, FILEDISPLAYHEIGHT);
+		frame.add(displayPane);
 		
 		// area test starts
 		topPanel.setBackground(Color.WHITE);
@@ -67,58 +89,58 @@ public class JavaIOQ3 {
 		content.setBackground(Color.WHITE);
 		// area test done
 		
-//		extPanel.add(listExtPane);
-//		filePanel.add(listFilePane);
-//		displayPanel.add(displayPane);
-		
-		frame.add(topPanel);
-		frame.add(listExtPane);
-		frame.add(listFilePane);
-		frame.add(displayPane);
-		
 		customizeLayout();
-		
 		frame.setLayout(new BorderLayout());
 		frame.setVisible(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
 	};
+	
 	
 	private void customizeLayout() {
 		Insets insets = frame.getInsets();
-		
-		topPanel.setBounds(0 + insets.left, 0 + insets.top, topPanel.getWidth(), topPanel.getHeight());
-//		extPanel.setBounds(0 + insets.left, 0 + insets.top, WIDTH / 20 * 5, HEIGHT / 10 * 9);
-//		filePanel.setBounds(WIDTH / 20 * 5 + insets.left, 0 + insets.top, WIDTH / 20 * 5, HEIGHT / 10 * 9);
-//		displayPanel.setBounds(WIDTH / 20 * 10 + insets.left, 0 + insets.top, WIDTH / 20 * 10, HEIGHT / 10 * 9);
-		
-		// WIDTH / 20 + insets.left, HEIGHT / 10 * 2 + insets.top, WIDTH / 20 * 3, HEIGHT / 10 * 5
-		listExtPane.setBounds(WIDTH / 20 + insets.left, HEIGHT / 10 * 2 + insets.top, WIDTH / 20 * 3, HEIGHT / 10 * 6);
-		listFilePane.setBounds(WIDTH / 20 * 6+ insets.left, HEIGHT / 10 * 2 + insets.top, WIDTH / 20 * 3, HEIGHT / 10 * 6);
-		displayPane.setBounds(WIDTH / 20 * 11 + insets.left, HEIGHT / 10 * 2 + insets.top, WIDTH/ 20 * 8, HEIGHT / 10 * 6);
+		topPanel.setBounds(0 + insets.left, YOFFSET + insets.top, TOPPANELWIDTH, TOPPANELHEIGHT);
+		listExtPane.setBounds(XOFFSET + insets.left, YOFFSET + TOPPANELHEIGHT + YPADDING + insets.top, EXTPANEWIDTH, EXTPANEHEIGHT);
+		listFilePane.setBounds(XOFFSET + EXTPANEWIDTH + XPADDING + insets.left, YOFFSET + TOPPANELHEIGHT + YPADDING + insets.top, FILEPANEWIDTH, FILEPANEHEIGHT);
+		displayPane.setBounds(XOFFSET + EXTPANEWIDTH + XPADDING * 2 + FILEPANEWIDTH + insets.left, YOFFSET + TOPPANELHEIGHT + YPADDING + insets.top, FILEDISPLAYWIDTH, FILEDISPLAYHEIGHT);
 	}
 	
-	private void setupExtList() {
+	@Override
+	public void valueChanged(ListSelectionEvent e) {
+		if (e.getValueIsAdjusting()) {
+			if (e.getSource() == listExt){
+				selectedExt = listExt.getSelectedValue();
+				getFileList();
+			} else if (e.getSource() == listFile) {
+				selectedFile = listFile.getSelectedValue();
+			}
+		}
+	}
+	
+	
+	private void getExtList() {
 //		String path = setPath();
 		String path = FILEPATH;
 		readFilesExt(path);
-		addExtList();
+		if (fileExtArrList != null) 
+			addExtList();
+		else
+			System.out.print("empty folder");
 	}
 	
 	private void readFilesExt(String path) {
+		fileExtArrList.clear();
 		File folder = new File(path);
-		fileExtArrList = new ArrayList<String>();
 		for (File file:folder.listFiles()){
 			String fileName = file.getName();
 			int index = indexOfDot(fileName);
 			if (index > 0) {
 				String extOfFile = fileName.substring(index);	
-				if (!fileExtArrList.contains(extOfFile) && fileExtArrList != null) {
+				if (!fileExtArrList.contains(extOfFile)) { // removed && fileExtArrList != null
 					fileExtArrList.add(extOfFile);
 				}
 			}
 		}
-		System.out.println(fileExtArrList); // test Display
+//		System.out.println(fileExtArrList); // test Display
 	}
 	
 	private int indexOfDot(String str) {
@@ -129,28 +151,16 @@ public class JavaIOQ3 {
 	}
 	
 	private void addExtList() {
-		DefaultListModel<String> extListModel = new DefaultListModel<String>();
 		for (int i = 0; i < fileExtArrList.size(); i++) {
 			extListModel.addElement(fileExtArrList.get(i));
 		}
-		listExt = new JList<String>(extListModel);
 		listExt.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		listExt.setSelectedIndex(0);
 		listExt.setVisibleRowCount(10);
 		selectedExt = fileExtArrList.get(0);
-		listExt.addListSelectionListener(new ListSelectionListener() {
-			@Override
-			public void valueChanged(ListSelectionEvent e) {
-				if (e.getValueIsAdjusting()) {
-					selectedExt = listExt.getSelectedValue();
-					setupFileList();
-				}
-			}
-		});
-		listExtPane = new JScrollPane(listExt);
 	}
 	
-	private void setupFileList() {
+	private void getFileList() {
 //		String path = setPath();
 		String path = FILEPATH;
 		loadAllFiles(path);
@@ -161,86 +171,45 @@ public class JavaIOQ3 {
 	 * list all files with selected extension
 	 */
 	private void loadAllFiles(String path) {
+		fileListArrList.clear();
 		if (selectedExt != null) {
 			File folder = new File(path);
-			fileListArrList = new ArrayList<String>();
+			
 			for (File file:folder.listFiles()) {
 				String fileName = file.getName();
 				if (fileName.endsWith(selectedExt)) {
 					fileListArrList.add(fileName);
 				}
 			}
-			System.out.println(fileListArrList);
+//			System.out.println(fileListArrList); // test display
 		}
 	}
 	
 	private void addFileList() {
-		DefaultListModel<String> fileListModel = new DefaultListModel<String>();
+		fileListModel.clear();
 		for (int i = 0; i < fileListArrList.size(); i++) {
 			fileListModel.addElement(fileListArrList.get(i));
 		}
 		
-		listFile = new JList<String>(fileListModel);
-		listFile.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+		
+		System.out.println(fileListModel); // test display
+		
+		
+		listFile.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		listFile.setSelectedIndex(0);
 		listFile.setVisibleRowCount(10);
-		selectedFile = fileListArrList.get(0);
-		listFile.addListSelectionListener(new ListSelectionListener() {
-			@Override
-			public void valueChanged(ListSelectionEvent e) {
-				if (e.getValueIsAdjusting()) {
-					selectedFile = new String((String) (listFile.getSelectedValue()));
-				}
-			}
-		});
-		listFilePane = new JScrollPane(listFile);
+		
 	}
 	
-	/*
-	private void setupListbox() {
-		JComboBox<String> cb = new JComboBox<String>();
-		cb.addItem(".txt");
-		cb.addItem(".json");
-		cb.addItem(".java");
-		cb.addItem(".xml");
-		cb.addItem(".pdf");
-		cb.addItem(".class");
-		cb.setSelectedIndex(0);
-		cb.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e){
-				String str = (String) cb.getSelectedItem();
-				int len = fileFilter.displayFiles(FILEPATH, str).length;
-				String[] strList = fileFilter.displayFiles(FILEPATH, str);
-				panel.removeAll();
-				
-				StringBuilder sb = new StringBuilder();
-				
-				for (int i = 0; i < len; i++) {
-					JLabel label = new JLabel("\n" + strList[i]);
-					sb.append(strList[i] + "\n");
-					panel.add(label);
-				}
-				
-				content.setText(sb.toString());
-			}
-		});
-		JLabel listLabel = new JLabel("Display Extensions:");
-		topPanel.add(listLabel);
-		topPanel.add(cb);
-	};*/
+//	private void readSelectedFile(File f) {
+//		if (f != null) {
+//			BufferedReader br = new BufferedReader(new FileReader(f));
+//			while (br.readLine() != null ){
+//				
+//			}
+//		}
+//	}
 	
-	/*
-	private void comboBoxListener(String ext) {
-		System.out.println(fileFilter.displayFiles(FILEPATH, ext)[0]);
-		int len = fileFilter.displayFiles(FILEPATH, ext).length;
-		String[] str = fileFilter.displayFiles(FILEPATH, ext);
-		panel.removeAll();
-		for (int i = 0; i < len; i++) {
-			JLabel label = new JLabel("\n" + str[i]);
-			panel.add(label);
-		}
-		
-	} */
 	
 	public static void main(String[] args) {
 		JavaIOQ3 instance = new JavaIOQ3();
@@ -249,18 +218,22 @@ public class JavaIOQ3 {
 	
 	private static JFrame frame;
 	/* declare all panels */
-	private static JPanel panel;
 	private static JPanel topPanel;
-//	private static JPanel extPanel;
-//	private static JPanel filePanel;
-//	private static JPanel displayPanel;
+	
+	/* declare all JScrollPane */
 	private static JScrollPane listExtPane; // list all types of extensions
 	private static JScrollPane listFilePane; // list all the files with certain extension
 	private static JScrollPane displayPane; // display file contents
 	
+	/* declare all ArrayList */
 	private static ArrayList<String> fileExtArrList; // saves all types of extension included in current path
 	private static ArrayList<String> fileListArrList; // saves all files with selected extension in current path
 	
+	/* declare all listModel */
+	private static DefaultListModel<String> extListModel;
+	private static DefaultListModel<String> fileListModel;
+	
+	/* declare all JList */
 	private static JList<String> listExt;
 	private static JList<String> listFile;
 	private static JTextArea content;
@@ -269,4 +242,6 @@ public class JavaIOQ3 {
 	private static String selectedFile;
 	
 	private static JavaIOQ1 fileFilter;
+
+
 }
