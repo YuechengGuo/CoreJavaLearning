@@ -205,6 +205,7 @@ public class JavaIOQ3 implements ListSelectionListener, ActionListener {
 			String subPath = fileChooser.getSelectedFile().getName() + "/";
 			filePath = path + subPath;
 			showPath.setText(filePath);
+			fileListModel.clear();
 			getFiles();
 		}
 	} 
