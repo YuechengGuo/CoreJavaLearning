@@ -7,10 +7,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.HashMap;
 import java.util.Properties;
 import java.util.Scanner;
 
+
+class InsufficientBalanceException extends Exception {
+	InsufficientBalanceException() {
+		System.out.println("Insufficient fund!");
+	}
+}
 
 public class CheckBalance {
 	
@@ -119,7 +124,13 @@ public class CheckBalance {
 			balance -= transFund;
 			System.out.printf("Transfer completed! You balance is: %.2f \n", balance);
 		} else if (transFund > balance) {
-			System.out.println("Insufficient balance left. \n");
+			try {
+				InsufficientBalanceException fundExp = new InsufficientBalanceException();
+				throw fundExp;
+			} catch (InsufficientBalanceException e) {
+				e.printStackTrace();
+			}
+//			System.out.println("Insufficient balance left. \n");
 		} 			
 		else {
 			System.out.println("Please enter a positive value \n");
@@ -129,10 +140,10 @@ public class CheckBalance {
 	
 	public static void main(String[] args) throws FileNotFoundException, IOException, InterruptedException {
 		new CheckBalance();
+		
 	}
 	
 
-	private static HashMap<String, String> map;
 	private static double balance;
 	/* use prop to save the data from properties file */
 	private static BufferedReader br;
@@ -140,5 +151,4 @@ public class CheckBalance {
 	private static boolean access;
 	private static Properties prop;
 	private static InputStream input;
-	
 }
