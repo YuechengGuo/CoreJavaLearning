@@ -269,7 +269,4 @@ public class JavaIOQ3 implements ListSelectionListener, ActionListener {
 	/* declare a HashMap to map extension with its files */
 	private static HashMap<String, ArrayList<String>> extFilesMap;
 
-
-	
-
 }
