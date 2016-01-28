@@ -21,11 +21,10 @@ import javax.swing.event.ListSelectionListener;
 
 public class JavaIOQ3 implements ListSelectionListener, ActionListener {
 	/** set size for the frame */
-	private static final int WIDTH = 1000;
+	private static final int WIDTH = 800;
 	private static final int HEIGHT = 500;
 	
-	private static final int TOPPANELWIDTH = WIDTH;
-	private static final int TOPPANELHEIGHT = HEIGHT / 10 * 1;
+	private static final int SCROLLPANEYOFFSET = HEIGHT / 10 * 1;
 	
 	private static final int PATHLABELWIDTH = 120;
 	private static final int PATHLABELHEIGHT = HEIGHT / 10 / 2;
@@ -56,21 +55,12 @@ public class JavaIOQ3 implements ListSelectionListener, ActionListener {
 	JavaIOQ3() {
 		frame = new JFrame();
 		frame.setSize(WIDTH, HEIGHT);
+		
 		mainDisplay();
-		
 		getFiles();
-//		getExtList();
-		// getFileList();
-		// setupControls();
-		
-		
 	}
 	
 	private void mainDisplay() {
-
-		topPanel = new JPanel();
-		topPanel.setSize(TOPPANELWIDTH, TOPPANELHEIGHT);
-		// frame.add(topPanel);
 		
 		filePath = DEFAULTPATH;
 		pathLabel = new JLabel("Current Directory: ");
@@ -144,14 +134,13 @@ public class JavaIOQ3 implements ListSelectionListener, ActionListener {
 	
 	private void customizeLayout() {
 		Insets insets = frame.getInsets();
-		topPanel.setBounds(0 + insets.left, insets.top, TOPPANELWIDTH, TOPPANELHEIGHT);
 		pathLabel.setBounds(XOFFSET + insets.left, YOFFSET + insets.top, pathLabel.getWidth(), pathLabel.getHeight());
 		showPath.setBounds(XOFFSET + insets.left + pathLabel.getWidth(), YOFFSET + insets.top, showPath.getWidth(), showPath.getHeight());
-		listExtPane.setBounds(XOFFSET + insets.left, TOPPANELHEIGHT + YPADDING + insets.top, EXTPANEWIDTH, EXTPANEHEIGHT);
-		listFilePane.setBounds(XOFFSET + EXTPANEWIDTH + XPADDING + insets.left, TOPPANELHEIGHT + YPADDING + insets.top, FILEPANEWIDTH, FILEPANEHEIGHT);
-		displayPane.setBounds(XOFFSET + EXTPANEWIDTH + XPADDING * 2 + FILEPANEWIDTH + insets.left, TOPPANELHEIGHT + YPADDING + insets.top, FILEDISPLAYWIDTH, FILEDISPLAYHEIGHT);
-		pathButton.setBounds(XOFFSET + insets.left, TOPPANELHEIGHT + EXTPANEHEIGHT + YPADDING + insets.top, BUTTONWIDTH, BUTTONHEIGHT);
-		openFileButton.setBounds(XOFFSET + EXTPANEWIDTH + XPADDING + insets.left, TOPPANELHEIGHT + EXTPANEHEIGHT + YPADDING + insets.top, BUTTONWIDTH, BUTTONHEIGHT);
+		listExtPane.setBounds(XOFFSET + insets.left, SCROLLPANEYOFFSET + YPADDING + insets.top, EXTPANEWIDTH, EXTPANEHEIGHT);
+		listFilePane.setBounds(XOFFSET + EXTPANEWIDTH + XPADDING + insets.left, SCROLLPANEYOFFSET + YPADDING + insets.top, FILEPANEWIDTH, FILEPANEHEIGHT);
+		displayPane.setBounds(XOFFSET + EXTPANEWIDTH + XPADDING * 2 + FILEPANEWIDTH + insets.left, SCROLLPANEYOFFSET + YPADDING + insets.top, FILEDISPLAYWIDTH, FILEDISPLAYHEIGHT);
+		pathButton.setBounds(XOFFSET + insets.left, SCROLLPANEYOFFSET + EXTPANEHEIGHT + YPADDING + insets.top, BUTTONWIDTH, BUTTONHEIGHT);
+		openFileButton.setBounds(XOFFSET + EXTPANEWIDTH + XPADDING + insets.left, SCROLLPANEYOFFSET + EXTPANEHEIGHT + YPADDING + insets.top, BUTTONWIDTH, BUTTONHEIGHT);
 	}
 	
 	@Override // selection listener for JList
@@ -269,10 +258,7 @@ public class JavaIOQ3 implements ListSelectionListener, ActionListener {
 		// fileFilter = new JavaIOQ1();
 	}
 	
-	private static JFrame frame;
-	/* declare all panels */
-	private static JPanel topPanel;
-	
+	private static JFrame frame;	
 	
 	/* declare current directory by JLabel */
 	private static JLabel pathLabel;
