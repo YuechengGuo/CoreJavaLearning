@@ -1,35 +1,16 @@
 package Assignment2;
 
+import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.Scanner;
 
-//class UserInfo {
-//	UserInfo(String name, String pass, double bal) {
-//		userName = name;
-//		password = pass;
-//		balance = bal;
-//	}
-//	
-//	public String getUserName(){
-//		return userName;
-//	}
-//	public String getPassword(){
-//		return password;
-//	}
-//	public double getBalance(){
-//		return balance;
-//	}
-//	
-//	private String userName;
-//	private String password;
-//	private double balance;
-//}
 
 public class CheckBalance {
 	
@@ -48,9 +29,11 @@ public class CheckBalance {
 	private void initialization() throws FileNotFoundException {
 		balance = 2000;
 		prop = new Properties();
-		input = new FileInputStream(DEFAULTPATH + FILENAME);//getClass().getClassLoader().getResourceAsStream(DEFAULTPATH + FILENAME);
+		input = new FileInputStream(DEFAULTPATH + FILENAME);
 		scan = new Scanner(System.in);
 		access = false;
+		InputStreamReader isr = new InputStreamReader(System.in);
+		br = new BufferedReader(isr);
 	}
 	
 	private void createPropertiesFile() throws FileNotFoundException, IOException {
@@ -69,18 +52,17 @@ public class CheckBalance {
 	private void getPropertiesFile() throws IOException {
 		if (input != null) {
 			prop.load(input);
-//			System.out.println(prop.getProperty("Yuecheng")); //test display
 		} else
 			System.out.println("File not found");
 	}
 	
-	private void setupConsoleLogin() throws InterruptedException {
+	private void setupConsoleLogin() throws InterruptedException, IOException {
 		while (!access) {
 			System.out.println("Enter your username: ");
-			String inputUserName = scan.nextLine();
+			String inputUserName = br.readLine();  //scan.nextLine();
 			if (prop.containsKey(inputUserName)) {
 				System.out.println("Password: ");
-				String inputPassword = scan.nextLine();
+				String inputPassword = br.readLine();//scan.nextLine();
 				if (inputPassword.equals(prop.getProperty(inputUserName))) {
 					successLogin();
 					access = true;
@@ -93,11 +75,12 @@ public class CheckBalance {
 		}
 	}
 	
-	private void successLogin() throws InterruptedException {
+	private void successLogin() throws InterruptedException, IOException {
 		while (true) {
 			System.out.println("\n1. View Balance \n2. Fund Transfer \n3. Quit");
-//			Scanner optionScan = new Scanner(System.in);
-			String chooseOption = scan.nextLine();
+			
+			
+			String chooseOption = br.readLine();
 			if (chooseBalance(chooseOption)) {
 				System.out.println("Balance: " + balance);
 			} else if (chooseFundTransfer(chooseOption)) {
@@ -152,6 +135,7 @@ public class CheckBalance {
 	private static HashMap<String, String> map;
 	private static double balance;
 	/* use prop to save the data from properties file */
+	private static BufferedReader br;
 	private static Scanner scan;
 	private static boolean access;
 	private static Properties prop;
