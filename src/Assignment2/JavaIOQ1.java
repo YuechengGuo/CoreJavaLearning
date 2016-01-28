@@ -6,6 +6,7 @@ package Assignment2;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.util.ArrayList;
 
 public class JavaIOQ1 {
 	/* declare constants */
@@ -13,16 +14,12 @@ public class JavaIOQ1 {
 	private static final String FILEPATH = "/Users/Yuecheng/Desktop/";
 	
 	/** file type to be filtered */
-	private static String FILEEXTENSION= ".txt"; 
+	private static String FILEEXTENSION= ".pdf"; 
 	
 	JavaIOQ1() {
+		listFiles = new ArrayList<String>();
 //		this.filePath = path;
 //		this.fileExtension = extension;
-	}
-	
-	public static void main(String[] args) {
-		JavaIOQ1 instance = new JavaIOQ1();
-		System.out.println(instance.displayFiles(FILEPATH, FILEEXTENSION));
 	}
 	
 	/* filter main method, override accept(File dir, String name){} method */
@@ -34,6 +31,7 @@ public class JavaIOQ1 {
 					int ind = name.lastIndexOf('.'); // index of . in the string
 					String str = name.substring(ind); // save the extension in str
 					if (str.equals(ext)) {
+						listFiles.add(name);
 						return true;
 					}
 				}
@@ -58,5 +56,13 @@ public class JavaIOQ1 {
 		}
 		return null;
 	}
+	
+	public static void main(String[] args) {
+		JavaIOQ1 instance = new JavaIOQ1();
+		instance.displayFiles(FILEPATH, FILEEXTENSION);
+		System.out.println(listFiles);
+	}
+	
+	private static ArrayList<String> listFiles;
 	
 }
