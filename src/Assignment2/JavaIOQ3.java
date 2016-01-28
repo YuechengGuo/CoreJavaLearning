@@ -148,9 +148,11 @@ public class JavaIOQ3 implements ListSelectionListener, ActionListener {
 		if (e.getValueIsAdjusting()) {
 			if (e.getSource() == listExt){
 				String selectedExt = listExt.getSelectedValue();
+				content.setText("");
 				getFileList(selectedExt);
 			} else if (e.getSource() == listFile) {
 				selectedFile = filePath + listFile.getSelectedValue();
+				content.setText("");
 				readSelectedFile();
 			}
 		}
@@ -206,6 +208,7 @@ public class JavaIOQ3 implements ListSelectionListener, ActionListener {
 			filePath = path + subPath;
 			showPath.setText(filePath);
 			fileListModel.clear();
+			content.setText("");
 			getFiles();
 		}
 	} 
