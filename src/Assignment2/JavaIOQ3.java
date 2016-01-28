@@ -63,7 +63,7 @@ public class JavaIOQ3 implements ListSelectionListener, ActionListener {
 		// getFileList();
 		// setupControls();
 		
-		// Desktop.getDesktop().open(new File(path));
+		
 	}
 	
 	private void mainDisplay() {
@@ -93,6 +93,9 @@ public class JavaIOQ3 implements ListSelectionListener, ActionListener {
 		frame.add(pathButton);
 		
 		openFileButton = new JButton("Open file");
+		openFileButton.setSize(BUTTONWIDTH, BUTTONHEIGHT);
+		openFileButton.addActionListener(this);
+		frame.add(openFileButton);
 		
 		extFilesMap = new HashMap<String, ArrayList<String>>();
 
@@ -148,6 +151,7 @@ public class JavaIOQ3 implements ListSelectionListener, ActionListener {
 		listFilePane.setBounds(XOFFSET + EXTPANEWIDTH + XPADDING + insets.left, TOPPANELHEIGHT + YPADDING + insets.top, FILEPANEWIDTH, FILEPANEHEIGHT);
 		displayPane.setBounds(XOFFSET + EXTPANEWIDTH + XPADDING * 2 + FILEPANEWIDTH + insets.left, TOPPANELHEIGHT + YPADDING + insets.top, FILEDISPLAYWIDTH, FILEDISPLAYHEIGHT);
 		pathButton.setBounds(XOFFSET + insets.left, TOPPANELHEIGHT + EXTPANEHEIGHT + YPADDING + insets.top, BUTTONWIDTH, BUTTONHEIGHT);
+		openFileButton.setBounds(XOFFSET + EXTPANEWIDTH + XPADDING + insets.left, TOPPANELHEIGHT + EXTPANEHEIGHT + YPADDING + insets.top, BUTTONWIDTH, BUTTONHEIGHT);
 	}
 	
 	@Override // selection listener for JList
@@ -157,8 +161,8 @@ public class JavaIOQ3 implements ListSelectionListener, ActionListener {
 				String selectedExt = listExt.getSelectedValue();
 				getFileList(selectedExt);
 			} else if (e.getSource() == listFile) {
-				String selectedFile = listFile.getSelectedValue();
-				readSelectedFile(selectedFile);
+				selectedFile = filePath + listFile.getSelectedValue();
+				readSelectedFile();
 			}
 		}
 	}
@@ -167,6 +171,8 @@ public class JavaIOQ3 implements ListSelectionListener, ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == pathButton) {
 			setPath();
+		} else if (e.getSource() == openFileButton) {
+			openSelectedFile();
 		}
 		
 	}
@@ -207,8 +213,8 @@ public class JavaIOQ3 implements ListSelectionListener, ActionListener {
 	private void setPath() {
 		if (fileChooser.showOpenDialog(openFileButton) == JFileChooser.APPROVE_OPTION) {
 			String path = fileChooser.getCurrentDirectory().toString() + "/";
-			String fileName = fileChooser.getSelectedFile().getName() + "/";
-			filePath = path + fileName;
+			String subPath = fileChooser.getSelectedFile().getName() + "/";
+			filePath = path + subPath;
 			showPath.setText(filePath);
 			getFiles();
 		}
@@ -230,23 +236,32 @@ public class JavaIOQ3 implements ListSelectionListener, ActionListener {
 		}
 	}
 	
-	private void readSelectedFile(String fileName) {
+	private void readSelectedFile() {
 //		System.out.println(fileName); // test display
 		content.setText("");
 		BufferedReader rd = null;
 		try{
-			rd = new BufferedReader(new FileReader(filePath + fileName));
+			rd = new BufferedReader(new FileReader(selectedFile));
 			String str = "";
 			while (rd.readLine() != null){
 				str += rd.readLine() + "\n";
 			}
-			if (fileName.endsWith(".txt") || fileName.endsWith(".doc") || fileName.endsWith(".docx")  )
+			if (selectedFile.endsWith(".txt") || selectedFile.endsWith(".doc") || selectedFile.endsWith(".docx")  )
 				content.setText(str);
 			else
-				content.setText(fileName);
+				content.setText(selectedFile);
 		} catch(Exception e){
 			e.printStackTrace();
 		}
+	}
+	
+	private void openSelectedFile() {
+		try {
+			Desktop.getDesktop().open(new File(selectedFile));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 	}
 	
 	public static void main(String[] args) {
@@ -267,6 +282,7 @@ public class JavaIOQ3 implements ListSelectionListener, ActionListener {
 	private static JFileChooser fileChooser;
 	
 	private static String filePath;
+	private static String selectedFile;
 	
 	/* declare all buttons */
 	private static JButton pathButton;
