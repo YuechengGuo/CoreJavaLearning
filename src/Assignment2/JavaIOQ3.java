@@ -7,10 +7,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FilenameFilter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -21,13 +19,16 @@ import javax.swing.event.ListSelectionListener;
  * .txt, .java, .json, .xml, etc.
  */
 
-public class JavaIOQ3 implements ListSelectionListener {
+public class JavaIOQ3 implements ListSelectionListener, ActionListener {
 	/** set size for the frame */
 	private static final int WIDTH = 1000;
 	private static final int HEIGHT = 500;
 	
 	private static final int TOPPANELWIDTH = WIDTH;
 	private static final int TOPPANELHEIGHT = HEIGHT / 10 * 1;
+	
+	private static final int BUTTONWIDTH = WIDTH / 20 * 3;
+	private static final int BUTTONHEIGHT = HEIGHT / 10 / 2;
 	
 	private static final int EXTPANEWIDTH = WIDTH / 20 * 3;
 	private static final int EXTPANEHEIGHT = HEIGHT / 10 * 6;
@@ -44,7 +45,7 @@ public class JavaIOQ3 implements ListSelectionListener {
 	private static final int XPADDING = WIDTH / 20 * 1;
 	private static final int YPADDING = HEIGHT / 10 * 1;
 	/** file path */ 
-	private static final String FILEPATH = "/Users/Yuecheng/Desktop/";
+	private static final String DEFAULTPATH = "/Users/Yuecheng/Desktop/";
 	
 	JavaIOQ3() {
 		frame = new JFrame();
@@ -52,9 +53,11 @@ public class JavaIOQ3 implements ListSelectionListener {
 		mainDisplay();
 		
 		getFiles();
-		getExtList();
+//		getExtList();
 		// getFileList();
 		// setupControls();
+		
+		// Desktop.getDesktop().open(new File(path));
 	}
 	
 	private void mainDisplay() {
@@ -62,10 +65,21 @@ public class JavaIOQ3 implements ListSelectionListener {
 		topPanel = new JPanel();
 		topPanel.setSize(TOPPANELWIDTH, TOPPANELHEIGHT);
 		frame.add(topPanel);
-
-		tmpFileName = new ArrayList<String>();
-		fileExtArrList = new ArrayList<String>();
-		fileListArrList = new ArrayList<String>();
+		
+		filePath = DEFAULTPATH;
+		
+		fileChooser = new JFileChooser();
+		fileChooser.setCurrentDirectory(new File(filePath));
+		fileChooser.setDialogTitle("Select Directory");
+		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		
+		pathButton = new JButton("Choose Directory");
+		pathButton.setSize(BUTTONWIDTH, BUTTONHEIGHT);
+		pathButton.addActionListener(this);
+		frame.add(pathButton);
+		
+		openFileButton = new JButton("Open file");
+		
 		extFilesMap = new HashMap<String, ArrayList<String>>();
 
 		extListModel = new DefaultListModel<String>();
@@ -90,6 +104,7 @@ public class JavaIOQ3 implements ListSelectionListener {
 		
 		content = new JTextArea("");
 		content.setSize(FILEDISPLAYWIDTH, FILEDISPLAYHEIGHT);
+		content.setEditable(false);
 		displayPane = new JScrollPane(content);
 		displayPane.setSize(FILEDISPLAYWIDTH, FILEDISPLAYHEIGHT);
 		displayPane.setPreferredSize(new Dimension(FILEDISPLAYWIDTH / 2, FILEDISPLAYHEIGHT / 2));
@@ -116,6 +131,7 @@ public class JavaIOQ3 implements ListSelectionListener {
 		listExtPane.setBounds(XOFFSET + insets.left, YOFFSET + TOPPANELHEIGHT + YPADDING + insets.top, EXTPANEWIDTH, EXTPANEHEIGHT);
 		listFilePane.setBounds(XOFFSET + EXTPANEWIDTH + XPADDING + insets.left, YOFFSET + TOPPANELHEIGHT + YPADDING + insets.top, FILEPANEWIDTH, FILEPANEHEIGHT);
 		displayPane.setBounds(XOFFSET + EXTPANEWIDTH + XPADDING * 2 + FILEPANEWIDTH + insets.left, YOFFSET + TOPPANELHEIGHT + YPADDING + insets.top, FILEDISPLAYWIDTH, FILEDISPLAYHEIGHT);
+		pathButton.setBounds(XOFFSET + insets.left, YOFFSET + TOPPANELHEIGHT + EXTPANEHEIGHT + YPADDING + insets.top, BUTTONWIDTH, BUTTONHEIGHT);
 	}
 	
 	@Override // selection listener for JList
@@ -131,11 +147,21 @@ public class JavaIOQ3 implements ListSelectionListener {
 		}
 	}
 	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == pathButton) {
+			setPath();
+		}
+		
+	}
+
+	
 	/* get all files from current path, map the extension with its files */
 	private void getFiles() {
-		// tmpFileName.clear();
+		// setPath();
+		extFilesMap.clear();
 		try {
-			File folder = new File(FILEPATH);
+			File folder = new File(filePath);
 			FilenameFilter fileNameFilter = new FilenameFilter() {
 				@Override
 				public boolean accept(File dir, String name) {
@@ -155,12 +181,21 @@ public class JavaIOQ3 implements ListSelectionListener {
 				}
 			};
 			folder.listFiles(fileNameFilter);
+			getExtList();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 //		System.out.println(extFilesMap.toString()); // test display
 	}
 	
+	private void setPath() {
+		if (fileChooser.showOpenDialog(openFileButton) == JFileChooser.APPROVE_OPTION) {
+			String path = fileChooser.getCurrentDirectory().toString() + "/";
+			String fileName = fileChooser.getSelectedFile().getName() + "/";
+			filePath = path + fileName;
+			getFiles();
+		}
+	} 
 	
 	private void getExtList() {
 //		String path = setPath();
@@ -179,12 +214,11 @@ public class JavaIOQ3 implements ListSelectionListener {
 	}
 	
 	private void readSelectedFile(String fileName) {
-		System.out.println(fileName); // test display
-
+//		System.out.println(fileName); // test display
 		content.setText("");
 		BufferedReader rd = null;
 		try{
-			rd = new BufferedReader(new FileReader(FILEPATH + fileName));
+			rd = new BufferedReader(new FileReader(filePath + fileName));
 			String str = "";
 			while (rd.readLine() != null){
 				str += rd.readLine() + "\n";
@@ -207,15 +241,20 @@ public class JavaIOQ3 implements ListSelectionListener {
 	/* declare all panels */
 	private static JPanel topPanel;
 	
+	/* declare path finder */
+	private static JFileChooser fileChooser;
+	
+	private static String filePath;
+	
+	/* declare all buttons */
+	private static JButton pathButton;
+	private static JButton openFileButton;
+	
 	/* declare all JScrollPane */
 	private static JScrollPane listExtPane; // list all types of extensions
 	private static JScrollPane listFilePane; // list all the files with certain extension
 	private static JScrollPane displayPane; // display file contents
-	
-	/* declare all ArrayList */
-	private static ArrayList<String> fileExtArrList; // saves all types of extension included in current path
-	private static ArrayList<String> fileListArrList; // saves all files with selected extension in current path
-	
+		
 	/* declare all listModel */
 	private static DefaultListModel<String> extListModel;
 	private static DefaultListModel<String> fileListModel;
@@ -223,14 +262,14 @@ public class JavaIOQ3 implements ListSelectionListener {
 	/* declare all JList */
 	private static JList<String> listExt;
 	private static JList<String> listFile;
+	
+	/* declare preview file reader */
 	private static JTextArea content;
 	
-//	private static String selectedExt;
-//	private static String selectedFile;
-	
+	/* declare a HashMap to map extension with its files */
 	private static HashMap<String, ArrayList<String>> extFilesMap;
-	private static ArrayList<String> tmpFileName;
-	private static JavaIOQ1 fileFilter;
 
+
+	
 
 }
