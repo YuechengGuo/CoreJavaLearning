@@ -27,6 +27,12 @@ public class JavaIOQ3 implements ListSelectionListener, ActionListener {
 	private static final int TOPPANELWIDTH = WIDTH;
 	private static final int TOPPANELHEIGHT = HEIGHT / 10 * 1;
 	
+	private static final int PATHLABELWIDTH = 120;
+	private static final int PATHLABELHEIGHT = HEIGHT / 10 / 2;
+	
+	private static final int SHOWPATHWIDTH = WIDTH / 20 * 12;
+	private static final int SHOWPATHHEIGHT = HEIGHT / 10 / 2;
+	
 	private static final int BUTTONWIDTH = WIDTH / 20 * 3;
 	private static final int BUTTONHEIGHT = HEIGHT / 10 / 2;
 	
@@ -40,7 +46,7 @@ public class JavaIOQ3 implements ListSelectionListener, ActionListener {
 	private static final int FILEDISPLAYHEIGHT = HEIGHT / 10 * 6;
 	
 	private static final int XOFFSET = WIDTH / 20 * 1;
-	private static final int YOFFSET = HEIGHT / 20 * 0;
+	private static final int YOFFSET = HEIGHT / 20 * 1;
 	
 	private static final int XPADDING = WIDTH / 20 * 1;
 	private static final int YPADDING = HEIGHT / 10 * 1;
@@ -64,9 +70,17 @@ public class JavaIOQ3 implements ListSelectionListener, ActionListener {
 
 		topPanel = new JPanel();
 		topPanel.setSize(TOPPANELWIDTH, TOPPANELHEIGHT);
-		frame.add(topPanel);
+		// frame.add(topPanel);
 		
 		filePath = DEFAULTPATH;
+		pathLabel = new JLabel("Current Directory: ");
+		pathLabel.setSize(PATHLABELWIDTH, PATHLABELHEIGHT);
+		frame.add(pathLabel);
+		
+		showPath = new JTextArea(filePath);
+		showPath.setSize(SHOWPATHWIDTH, SHOWPATHHEIGHT);
+		showPath.setEditable(false);
+		frame.add(showPath);
 		
 		fileChooser = new JFileChooser();
 		fileChooser.setCurrentDirectory(new File(filePath));
@@ -111,7 +125,7 @@ public class JavaIOQ3 implements ListSelectionListener, ActionListener {
 		frame.add(displayPane);
 		
 		// area test starts
-		topPanel.setBackground(Color.WHITE);
+//		topPanel.setBackground(Color.WHITE);
 //		listExtPane.setBackground(Color.YELLOW);
 //		listFilePane.setBackground(Color.RED);
 //		displayPane.setBackground(Color.GREEN);
@@ -127,11 +141,13 @@ public class JavaIOQ3 implements ListSelectionListener, ActionListener {
 	
 	private void customizeLayout() {
 		Insets insets = frame.getInsets();
-		topPanel.setBounds(0 + insets.left, YOFFSET + insets.top, TOPPANELWIDTH, TOPPANELHEIGHT);
-		listExtPane.setBounds(XOFFSET + insets.left, YOFFSET + TOPPANELHEIGHT + YPADDING + insets.top, EXTPANEWIDTH, EXTPANEHEIGHT);
-		listFilePane.setBounds(XOFFSET + EXTPANEWIDTH + XPADDING + insets.left, YOFFSET + TOPPANELHEIGHT + YPADDING + insets.top, FILEPANEWIDTH, FILEPANEHEIGHT);
-		displayPane.setBounds(XOFFSET + EXTPANEWIDTH + XPADDING * 2 + FILEPANEWIDTH + insets.left, YOFFSET + TOPPANELHEIGHT + YPADDING + insets.top, FILEDISPLAYWIDTH, FILEDISPLAYHEIGHT);
-		pathButton.setBounds(XOFFSET + insets.left, YOFFSET + TOPPANELHEIGHT + EXTPANEHEIGHT + YPADDING + insets.top, BUTTONWIDTH, BUTTONHEIGHT);
+		topPanel.setBounds(0 + insets.left, insets.top, TOPPANELWIDTH, TOPPANELHEIGHT);
+		pathLabel.setBounds(XOFFSET + insets.left, YOFFSET + insets.top, pathLabel.getWidth(), pathLabel.getHeight());
+		showPath.setBounds(XOFFSET + insets.left + pathLabel.getWidth(), YOFFSET + insets.top, showPath.getWidth(), showPath.getHeight());
+		listExtPane.setBounds(XOFFSET + insets.left, TOPPANELHEIGHT + YPADDING + insets.top, EXTPANEWIDTH, EXTPANEHEIGHT);
+		listFilePane.setBounds(XOFFSET + EXTPANEWIDTH + XPADDING + insets.left, TOPPANELHEIGHT + YPADDING + insets.top, FILEPANEWIDTH, FILEPANEHEIGHT);
+		displayPane.setBounds(XOFFSET + EXTPANEWIDTH + XPADDING * 2 + FILEPANEWIDTH + insets.left, TOPPANELHEIGHT + YPADDING + insets.top, FILEDISPLAYWIDTH, FILEDISPLAYHEIGHT);
+		pathButton.setBounds(XOFFSET + insets.left, TOPPANELHEIGHT + EXTPANEHEIGHT + YPADDING + insets.top, BUTTONWIDTH, BUTTONHEIGHT);
 	}
 	
 	@Override // selection listener for JList
@@ -193,6 +209,7 @@ public class JavaIOQ3 implements ListSelectionListener, ActionListener {
 			String path = fileChooser.getCurrentDirectory().toString() + "/";
 			String fileName = fileChooser.getSelectedFile().getName() + "/";
 			filePath = path + fileName;
+			showPath.setText(filePath);
 			getFiles();
 		}
 	} 
@@ -223,7 +240,7 @@ public class JavaIOQ3 implements ListSelectionListener, ActionListener {
 			while (rd.readLine() != null){
 				str += rd.readLine() + "\n";
 			}
-			if (fileName.endsWith(".txt"))
+			if (fileName.endsWith(".txt") || fileName.endsWith(".doc") || fileName.endsWith(".docx")  )
 				content.setText(str);
 			else
 				content.setText(fileName);
@@ -240,6 +257,11 @@ public class JavaIOQ3 implements ListSelectionListener, ActionListener {
 	private static JFrame frame;
 	/* declare all panels */
 	private static JPanel topPanel;
+	
+	
+	/* declare current directory by JLabel */
+	private static JLabel pathLabel;
+	private static JTextArea showPath;
 	
 	/* declare path finder */
 	private static JFileChooser fileChooser;
