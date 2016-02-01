@@ -11,7 +11,7 @@ import java.util.HashMap;
 import javax.swing.*;
 
 public class MyCalendar implements ActionListener {
-	
+	/** initialize all constant */
 	private static final int WIDTH = 280;
 	private static final int HEIGHT = 240;
 	
@@ -211,8 +211,4 @@ public class MyCalendar implements ActionListener {
 	
 	private static HashMap<String, Integer> weekStrToNum;
 
-
-
-	
-	
 }
